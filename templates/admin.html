@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Ecommerce Gateway</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --sidebar-bg: #0f172a;
+            --sidebar-text: #94a3b8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+        header.top-header { background: var(--surface); border-bottom: 1px solid var(--border); height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 40; }
+        .brand-box { display: flex; align-items: center; gap: 12px; }
+        .brand-logo { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; }
+        .brand-title { font-size: 16px; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+        .brand-subtitle { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; border: 1px solid transparent; transition: all 0.15s ease; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: var(--surface); border-color: var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: #f1f5f9; }
+        .btn-danger-outline { background: var(--surface); border-color: #fecaca; color: #dc2626; }
+        .btn-danger-outline:hover { background: #fef2f2; }
+        .user-pill { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; background: #f1f5f9; border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--text-main); }
+        .user-badge { background: #2563eb; color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; text-transform: uppercase; }
+        .app-layout { display: flex; flex: 1; }
+        aside.sidebar { width: 220px; background: var(--sidebar-bg); padding: 16px 10px; display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+        .nav-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 10px 4px 10px; }
+        .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 6px; color: var(--sidebar-text); font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.15s ease; }
+        .nav-item:hover { color: #ffffff; background: #1e293b; }
+        .nav-item.active { color: #ffffff; background: #2563eb; }
+        .nav-item-left { display: flex; align-items: center; gap: 10px; }
+        .nav-tag { font-size: 11px; background: rgba(255, 255, 255, 0.15); padding: 1px 6px; border-radius: 10px; color: white; font-weight: 600; }
+        main.main-content { flex: 1; padding: 24px 28px; max-width: 1400px; width: 100%; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        .view-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .view-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
+        .filter-group { display: inline-flex; background: #e2e8f0; padding: 3px; border-radius: 8px; gap: 2px; }
+        .filter-btn { border: none; background: transparent; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.15s ease; }
+        .filter-btn.active { background: var(--surface); color: var(--text-main); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+        .stat-header { display: flex; align-items: center; justify-content: space-between; color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .stat-value { font-size: 24px; font-weight: 700; color: var(--text-main); line-height: 1.2; margin-top: 2px; }
+        .stat-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+        .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .panel-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; }
+        .panel-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .panel-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .panel-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .panel-label { color: var(--text-muted); }
+        .panel-val { font-weight: 600; color: var(--text-main); }
+        .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; background: #f1f5f9; color: var(--text-muted); }
+        .status-badge.success { background: var(--success-light); color: var(--success); }
+        .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .table-toolbar { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .search-input { border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; font-size: 13px; width: 280px; outline: none; }
+        .search-input:focus { border-color: var(--primary); }
+        table.data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        table.data-table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 12px; padding: 9px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        table.data-table td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); vertical-align: middle; }
+        table.data-table tr:hover td { background: #f8fafc; }
+        .empty-cell { color: #cbd5e1; }
+        .table-footer { padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); }
+        .pagination-btns { display: flex; gap: 6px; }
+        footer.app-footer { background: var(--surface); border-top: 1px solid var(--border); padding: 14px 24px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-backdrop.open { display: flex; }
+        .modal-box { background: var(--surface); border-radius: 8px; width: 100%; max-width: 400px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--text-main); }
+        .form-control { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; font-size: 13px; outline: none; }
+        .form-control:focus { border-color: var(--primary); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+        html, body { max-width: 100%; overflow-x: hidden; }
+        .table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+        @media (max-width: 900px) {
+            header.top-header {
+                height: auto;
+                min-height: 60px;
+                padding: 10px 14px;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .brand-title { font-size: 14px; }
+            .header-actions { flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+            .header-actions .user-pill { order: -1; }
+            .app-layout { flex-direction: column; }
+            aside.sidebar {
+                width: 100%;
+                padding: 8px;
+                flex-direction: row;
+                align-items: center;
+                overflow-x: auto;
+                gap: 5px;
+                position: sticky;
+                top: 60px;
+                z-index: 30;
+            }
+
+            .nav-label { display: none; }
+            .nav-item { flex: 0 0 auto; padding: 9px 10px; white-space: nowrap; }
+            .nav-item-left { gap: 7px; }
+            main.main-content { padding: 16px 12px; max-width: none; }
+            .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+            .panel-grid { grid-template-columns: 1fr; gap: 10px; }
+            .view-header { align-items: stretch; flex-direction: column; gap: 10px; }
+            .filter-group { width: 100%; overflow-x: auto; }
+            .filter-btn { flex: 1 0 auto; }
+            .table-toolbar { align-items: stretch; flex-direction: column; }
+            .search-input { width: 100%; }
+            footer.app-footer { padding: 12px 14px; gap: 8px; flex-direction: column; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .brand-subtitle { display: none; }
+            .header-actions .btn { padding: 6px 8px; font-size: 12px; }
+            .header-actions .user-pill { max-width: 150px; overflow: hidden; }
+            .header-actions .user-pill span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .stat-grid { grid-template-columns: 1fr; }
+            .panel-card { padding: 13px; }
+            .panel-row { gap: 8px; align-items: flex-start; }
+            .panel-val { text-align: right; overflow-wrap: anywhere; }
+            .modal-box { width: calc(100% - 20px); padding: 16px; }
+            .modal-actions { flex-direction: column-reverse; }
+            .modal-actions .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+﻿    <!-- Top Header -->
+    <header class="top-header">
+        <div class="brand-box">
+            <div class="brand-logo">EG</div>
+            <div>
+                <div class="brand-title">Ecommerce Gateway</div>
+                <div class="brand-subtitle">Admin Dashboard</div>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button class="btn btn-primary" onclick="window.print()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                Print Ledger
+            </button>
+            <a href="/" class="btn btn-outline">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Extractor App
+            </a>
+            <div class="user-pill">
+                <span>meerhammad5617@gmail.com</span>
+                <span class="user-badge">Admin</span>
+            </div>
+            <a href="/logout" class="btn btn-danger-outline">Logout</a>
+        </div>
+    </header>
+
+    <!-- App Layout -->
+    <div class="app-layout">
+        
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="nav-label">Navigation</div>
+            <a class="nav-item active" onclick="switchTab('overview')" id="nav-overview">
+                <div class="nav-item-left">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                    Overview
+                </div>
+            </a>
+            <a class="nav-item" onclick="switchTab('ledger')" id="nav-ledger">
+                <div class="nav-item-left">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                    Credit Ledger
+                </div>
+                <span class="nav-tag" id="nav-credits-tag">3,200</span>
+            </a>
+            <a class="nav-item" onclick="switchTab('ingestion')" id="nav-ingestion">
+                <div class="nav-item-left">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    User Ingestion
+                </div>
+            </a>
+            <a class="nav-item" onclick="switchTab('users')" id="nav-users">
+                <div class="nav-item-left">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    Users & Roles
+                </div>
+            </a>
+            <a class="nav-item" onclick="switchTab('credit-requests')" id="nav-credit-requests">
+                <div class="nav-item-left">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    Credit Requests
+                </div>
+                <span class="nav-tag" id="nav-requests-tag" style="background:#ef4444; color:white; display:none;">0</span>
+            </a>
+            <a class="nav-item" onclick="switchTab('catalogs')" id="nav-catalogs">
+                <div class="nav-item-left">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    Catalog Books
+                </div>
+            </a>
+            <a class="nav-item" onclick="switchTab('exhibitors')" id="nav-exhibitors">
+                <div class="nav-item-left">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    Exhibitors
+                </div>
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- TAB: OVERVIEW -->
+            <div id="tab-overview" class="tab-pane active">
+                <div class="view-header">
+                    <h1 class="view-title">Overview</h1>
+                    <div class="filter-group">
+                        <button class="filter-btn" onclick="changePeriod('today', this)">Today</button>
+                        <button class="filter-btn" onclick="changePeriod('week', this)">7 Days</button>
+                        <button class="filter-btn" onclick="changePeriod('month', this)">Month</button>
+                        <button class="filter-btn active" onclick="changePeriod('all', this)">All-Time</button>
+                    </div>
+                </div>
+
+                <!-- 4 Top Cards -->
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span>LandingAI Credits</span>
+                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                        </div>
+                        <div class="stat-value" id="stat-credits">3,200.00</div>
+                        <div class="stat-sub" id="stat-credits-sub">Base: 3,200 | Live: 0.00</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span>API Cost</span>
+                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div class="stat-value" id="stat-cost">$ 10.000</div>
+                        <div class="stat-sub" id="stat-cost-sub">Base: $10.00 | Live: $0.00</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span>DB Records</span>
+                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                        </div>
+                        <div class="stat-value" id="stat-records">6,475</div>
+                        <div class="stat-sub" id="stat-records-sub">4.75 MB | 4 Books</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span>Active Users</span>
+                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        </div>
+                        <div class="stat-value" id="stat-users">2</div>
+                        <div class="stat-sub" id="stat-users-sub">2 Approved Users</div>
+                    </div>
+                </div>
+
+                <!-- 2 Side by Side Panels -->
+                <div class="panel-grid">
+                    <!-- Credit Breakdown -->
+                    <div class="panel-card">
+                        <div class="panel-title">
+                            <span>LandingAI Usage</span>
+                            <span style="font-size:11px; font-weight:600; color:#2563eb; background:#eff6ff; padding:2px 8px; border-radius:4px;">$0.035 / Credit</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Baseline Credits</span>
+                            <span class="panel-val" id="row-base-credits">3,200 cr</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Baseline Cost</span>
+                            <span class="panel-val" id="row-base-cost">$10.000 USD</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Live Parse Credits</span>
+                            <span class="panel-val" id="row-live-parse">0.00 cr</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Live Extract Credits</span>
+                            <span class="panel-val" id="row-live-extract">0.00 cr</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Processed PDF Pages</span>
+                            <span class="panel-val" id="row-pages">0 pages</span>
+                        </div>
+                    </div>
+
+                    <!-- Database Diagnostics -->
+                    <div class="panel-card">
+                        <div class="panel-title">
+                            <span>Database Summary</span>
+                            <span class="status-badge success">Online</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Total Exhibitors</span>
+                            <span class="panel-val" id="row-total-exhibitors">6,475 rows</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Catalog Books</span>
+                            <span class="panel-val" id="row-catalog-editions">4 books</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Storage Size</span>
+                            <span class="panel-val" id="row-storage-size">4.75 MB</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Team Saves</span>
+                            <span class="panel-val" id="row-user-saves">0 rows</span>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">Database Status</span>
+                            <span class="panel-val" style="color:#16a34a;">Connected</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CREDIT LEDGER -->
+            <div id="tab-ledger" class="tab-pane">
+                <div class="view-header">
+                    <h1 class="view-title">Credit Ledger</h1>
+                    <button class="btn btn-primary" onclick="window.print()">Print Report</button>
+                </div>
+                <div class="table-card">
+                    <div class="table-toolbar">
+                        <span style="font-size:13px; font-weight:600;">Usage Log</span>
+                        <input type="text" class="search-input" placeholder="Search log..." oninput="filterTable(this, 'ledger-table')">
+                    </div>
+                    <table class="data-table" id="ledger-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Pages</th>
+                                <th>Credits</th>
+                                <th>Cost (USD)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-table-body">
+                            <tr>
+                                <td>Baseline</td>
+                                <td>system@ecommercegateway.com</td>
+                                <td>Initial Offset</td>
+                                <td>-</td>
+                                <td><strong>3,200.00</strong></td>
+                                <td>$10.000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: USER INGESTION -->
+            <div id="tab-ingestion" class="tab-pane">
+                <div class="view-header">
+                    <h1 class="view-title">User Ingestion</h1>
+                </div>
+                <div class="table-card">
+                    <div class="table-toolbar">
+                        <span style="font-size:13px; font-weight:600;">Saved Records Log</span>
+                        <input type="text" class="search-input" placeholder="Filter records..." oninput="filterTable(this, 'ingestion-table')">
+                    </div>
+                    <table class="data-table" id="ingestion-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Book ID</th>
+                                <th>Records</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ingestion-table-body">
+                            <tr>
+                                <td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">No extractions saved yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: USERS & ACCESS -->
+            <div id="tab-users" class="tab-pane">
+                <div class="view-header">
+                    <div>
+                        <h1 class="view-title">Users & Roles</h1>
+                        <p style="font-size:12px; color:var(--text-muted); margin-top:2px;">Manage user accounts, permissions, and extraction credit allocations.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('modal-add-user')">+ Add User</button>
+                </div>
+                <div class="table-card">
+                    <table class="data-table" id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Credit Balance</th>
+                                <th>Total Used</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: CREDIT REQUESTS -->
+            <div id="tab-credit-requests" class="tab-pane">
+                <div class="view-header">
+                    <div>
+                        <h1 class="view-title">User Credit Requests</h1>
+                        <p style="font-size:12px; color:var(--text-muted); margin-top:2px;">Approve or reject extraction credit requests from system users.</p>
+                    </div>
+                    <div class="filter-group">
+                        <button class="filter-btn active" id="filter-req-all" onclick="filterCreditRequests('all', this)">All</button>
+                        <button class="filter-btn" id="filter-req-pending" onclick="filterCreditRequests('pending', this)">Pending</button>
+                        <button class="filter-btn" id="filter-req-approved" onclick="filterCreditRequests('approved', this)">Approved</button>
+                        <button class="filter-btn" id="filter-req-rejected" onclick="filterCreditRequests('rejected', this)">Rejected</button>
+                    </div>
+                </div>
+                <div class="table-card">
+                    <table class="data-table" id="credit-requests-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>User Email</th>
+                                <th>Current Balance</th>
+                                <th>Requested Amount</th>
+                                <th>Reason / Note</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="credit-requests-table-body">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: CATALOG BOOKS -->
+            <div id="tab-catalogs" class="tab-pane">
+                <div class="view-header">
+                    <h1 class="view-title">Catalog Books</h1>
+                </div>
+                <div class="table-card">
+                    <table class="data-table" id="catalogs-table">
+                        <thead>
+                            <tr>
+                                <th>Book ID</th>
+                                <th>Book Name</th>
+                                <th>Country</th>
+                                <th>Exhibitors</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catalogs-table-body">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: EXHIBITORS -->
+            <div id="tab-exhibitors" class="tab-pane">
+                <div class="view-header">
+                    <h1 class="view-title">Exhibitor Master Records</h1>
+                    <a id="btn-export-exhibitors" href="/admin/export-exhibitors" class="btn btn-outline">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Export Excel
+                    </a>
+                </div>
+                <div class="table-card">
+                    <div class="table-toolbar" style="flex-wrap:wrap; gap:10px;">
+                        <div style="display:flex; gap:8px; flex:1; min-width:300px;">
+                            <input type="text" class="search-input" id="exhibitor-search" style="flex:1;" placeholder="Search by Country (e.g. China), Book ID, Book Name, Exhibitor Name..." onkeydown="if(event.key==='Enter') loadExhibitors(1)">
+                            <button class="btn btn-primary" onclick="loadExhibitors(1)">Search</button>
+                            <button class="btn btn-outline" onclick="document.getElementById('exhibitor-search').value=''; loadExhibitors(1)">Reset</button>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Book ID</th>
+                                <th>Country</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Tel</th>
+                                <th>Email</th>
+                                <th>Website</th>
+                                <th>Fax</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exhibitors-table-body">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                    <div class="table-footer">
+                        <span id="exhibitor-count-label">Showing records</span>
+                        <div class="pagination-btns">
+                            <button class="btn btn-outline" id="btn-prev-page" onclick="prevExhibitorPage()">Previous</button>
+                            <span id="exhibitor-page-indicator" style="align-self:center; font-weight:600; font-size:12px; margin:0 4px;">Page 1</span>
+                            <button class="btn btn-outline" id="btn-next-page" onclick="nextExhibitorPage()">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+        <span>&copy; Ecommerce Gateway. All rights reserved.</span>
+        <span>LandingAI Document OCR Extraction System</span>
+    </footer>
+
+    <!-- Add User Modal -->
+    <div class="modal-backdrop" id="modal-add-user">
+        <div class="modal-box">
+            <h2 class="modal-title">Add System User</h2>
+            <form id="add-user-form" onsubmit="submitAddUser(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" id="new-user-email" required placeholder="user@ecommercegateway.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" id="new-user-password" required minlength="6" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select class="form-control" id="new-user-role">
+                        <option value="user">Standard User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-add-user')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Allocate / Add Credits Modal -->
+    <div class="modal-backdrop" id="modal-add-credits">
+        <div class="modal-box">
+            <h2 class="modal-title">Allocate Credits to User</h2>
+            <form id="add-credits-form" onsubmit="submitAddCredits(event)">
+                <input type="hidden" id="add-credits-user-id">
+                <input type="hidden" id="add-credits-user-email">
+                
+                <div class="form-group">
+                    <label>User Account</label>
+                    <input type="text" class="form-control" id="add-credits-user-display" readonly style="background:#f8fafc; font-weight:600;">
+                </div>
+                <div class="form-group">
+                    <label>Current Credit Balance</label>
+                    <input type="text" class="form-control" id="add-credits-current-display" readonly style="background:#f8fafc; font-weight:700; color:#2563eb;">
+                </div>
+                <div class="form-group">
+                    <label>Credits to Add <span style="color:#ef4444;">*</span></label>
+                    <div style="display:flex; gap:6px; margin-bottom:8px;">
+                        <button type="button" class="btn btn-outline" style="padding:2px 8px; font-size:11px;" onclick="document.getElementById('add-credits-amount').value = 50">+50 cr</button>
+                        <button type="button" class="btn btn-outline" style="padding:2px 8px; font-size:11px;" onclick="document.getElementById('add-credits-amount').value = 100">+100 cr</button>
+                        <button type="button" class="btn btn-outline" style="padding:2px 8px; font-size:11px;" onclick="document.getElementById('add-credits-amount').value = 250">+250 cr</button>
+                        <button type="button" class="btn btn-outline" style="padding:2px 8px; font-size:11px;" onclick="document.getElementById('add-credits-amount').value = 500">+500 cr</button>
+                    </div>
+                    <input type="number" class="form-control" id="add-credits-amount" required min="1" max="100000" step="1" placeholder="e.g. 100" style="font-weight:700;">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-add-credits')">Cancel</button>
+                    <button type="submit" id="btn-submit-add-credits" class="btn btn-primary">Confirm & Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Approve Credit Request Modal -->
+    <div class="modal-backdrop" id="modal-approve-request">
+        <div class="modal-box">
+            <h2 class="modal-title">Approve Credit Request</h2>
+            <form id="approve-request-form" onsubmit="submitApproveRequest(event)">
+                <input type="hidden" id="approve-req-id">
+                
+                <div class="form-group">
+                    <label>User Email</label>
+                    <input type="text" class="form-control" id="approve-req-user-email" readonly style="background:#f8fafc; font-weight:600;">
+                </div>
+                <div class="form-group">
+                    <label>User's Reason / Note</label>
+                    <textarea class="form-control" id="approve-req-reason" readonly rows="2" style="background:#f8fafc; resize:none;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Approved Credit Amount <span style="color:#ef4444;">*</span></label>
+                    <input type="number" class="form-control" id="approve-req-amount" required min="1" max="100000" step="1" style="font-weight:700; color:#16a34a;">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-approve-request')">Cancel</button>
+                    <button type="submit" id="btn-submit-approve-req" class="btn btn-primary" style="background:#16a34a;">Confirm & Approve</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Book & Country Modal -->
+    <div class="modal-backdrop" id="modal-edit-book">
+        <div class="modal-box">
+            <h2 class="modal-title">Edit Book & Country Details</h2>
+            <form id="edit-book-form" onsubmit="submitEditBook(event)">
+                <input type="hidden" id="edit-book-original-id">
+                
+                <div class="form-group">
+                    <label>Book ID <span style="color:#ef4444;">*</span></label>
+                    <input type="text" class="form-control" id="edit-book-id" required placeholder="e.g. B-0127">
+                    <small style="color:var(--text-muted); font-size:11px;">Changing Book ID will cascade-update all exhibitor records.</small>
+                </div>
+                <div class="form-group">
+                    <label>Book Name <span style="color:#ef4444;">*</span></label>
+                    <input type="text" class="form-control" id="edit-book-name" required placeholder="e.g. China Import & Export">
+                </div>
+                <div class="form-group">
+                    <label>Country <span style="color:#ef4444;">*</span></label>
+                    <input type="text" class="form-control" id="edit-book-country" required placeholder="e.g. China, Pakistan, Germany">
+                    <small style="color:var(--text-muted); font-size:11px;">Used for country-level filtering across all books & records.</small>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-edit-book')">Cancel</button>
+                    <button type="submit" id="btn-submit-edit-book" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let currentPeriod = 'all';
+        let exhibitorPage = 1;
+        let totalExhibitorPages = 1;
+        let currentRequestFilter = 'all';
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            const targetTab = document.getElementById('tab-' + tabId);
+            const targetNav = document.getElementById('nav-' + tabId);
+            
+            if (targetTab) targetTab.classList.add('active');
+            if (targetNav) targetNav.classList.add('active');
+
+            if (tabId === 'overview') loadOverviewMetrics();
+            if (tabId === 'ledger') loadLedger();
+            if (tabId === 'ingestion') loadIngestionLogs();
+            if (tabId === 'users') loadUsers();
+            if (tabId === 'credit-requests') loadCreditRequests();
+            if (tabId === 'catalogs') loadCatalogs();
+            if (tabId === 'exhibitors') loadExhibitors(1);
+        }
+
+        function changePeriod(period, btn) {
+            currentPeriod = period;
+            document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            loadOverviewMetrics();
+        }
+
+        async function loadOverviewMetrics() {
+            try {
+                const res = await fetch(`/admin/overview-metrics?timeframe=${currentPeriod}`);
+                if (!res.ok) return;
+                const d = await res.json();
+                const m = d.metrics || d || {};
+
+                const totalCredits = Number(m.total_credits_used !== undefined ? m.total_credits_used : (m.total_credits || 3200));
+                const liveCredits = Number(m.live_credits_used !== undefined ? m.live_credits_used : (m.live_credits || 0));
+                const totalCost = Number(m.total_cost_usd !== undefined ? m.total_cost_usd : 10.0);
+                const liveCost = Number(m.live_cost_usd !== undefined ? m.live_cost_usd : 0.0);
+                const totalExhibitors = Number(m.total_exhibitors !== undefined ? m.total_exhibitors : 7367);
+                const totalBooks = Number(m.total_books !== undefined ? m.total_books : (m.total_catalogs || 5));
+                const storageMb = m.est_storage_mb || m.storage_estimate_mb || '5.41';
+                const totalUsers = m.total_users || 2;
+                const approvedUsers = m.approved_users || m.active_users || 2;
+                const userSavesCount = m.total_records_saved_by_users !== undefined ? m.total_records_saved_by_users : (m.user_saves_count || 0);
+
+                // Top stat cards
+                document.getElementById('stat-credits').textContent = totalCredits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('stat-credits-sub').textContent = `Base: 3,200 | Live: ${liveCredits.toFixed(2)}`;
+                
+                document.getElementById('stat-cost').textContent = '$ ' + totalCost.toFixed(3);
+                document.getElementById('stat-cost-sub').textContent = `Base: $10.00 | Live: $${liveCost.toFixed(3)}`;
+                
+                document.getElementById('stat-records').textContent = totalExhibitors.toLocaleString();
+                document.getElementById('stat-records-sub').textContent = `${storageMb} MB | ${totalBooks} Books`;
+                
+                document.getElementById('stat-users').textContent = totalUsers;
+                document.getElementById('stat-users-sub').textContent = `${approvedUsers} Approved Users`;
+
+                // Sidebar tag
+                const navTag = document.getElementById('nav-credits-tag');
+                if (navTag) navTag.textContent = Math.round(totalCredits).toLocaleString();
+
+                // Panels
+                document.getElementById('row-base-credits').textContent = '3,200 cr';
+                document.getElementById('row-base-cost').textContent = '$10.000 USD';
+                document.getElementById('row-live-parse').textContent = `${Number(m.total_parse_credits || m.live_parse_credits || 0).toFixed(2)} cr`;
+                document.getElementById('row-live-extract').textContent = `${Number(m.total_extract_credits || m.live_extract_credits || 0).toFixed(2)} cr`;
+                document.getElementById('row-pages').textContent = `${m.total_pages_processed || m.live_pages || 0} pages`;
+
+                document.getElementById('row-total-exhibitors').textContent = `${totalExhibitors.toLocaleString()} rows`;
+                document.getElementById('row-catalog-editions').textContent = `${totalBooks} books`;
+                document.getElementById('row-storage-size').textContent = `${storageMb} MB`;
+                document.getElementById('row-user-saves').textContent = `${userSavesCount.toLocaleString()} rows`;
+
+                // Check pending credit requests
+                checkPendingCreditRequests();
+            } catch (err) {
+                console.error('Error fetching metrics:', err);
+            }
+        }
+
+        async function checkPendingCreditRequests() {
+            try {
+                const res = await fetch('/admin/credit-requests?status=pending');
+                if (!res.ok) return;
+                const d = await res.json();
+                const count = d.pending_count !== undefined ? d.pending_count : (d.requests ? d.requests.length : 0);
+                const tag = document.getElementById('nav-requests-tag');
+                if (tag) {
+                    if (count > 0) {
+                        tag.textContent = count;
+                        tag.style.display = 'inline-block';
+                    } else {
+                        tag.style.display = 'none';
+                    }
+                }
+            } catch (e) {
+                console.error('Error checking pending requests:', e);
+            }
+        }
+
+        async function loadExhibitors(page = 1) {
+            exhibitorPage = page;
+            const search = document.getElementById('exhibitor-search').value.trim();
+            const tbody = document.getElementById('exhibitors-table-body');
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">Loading records...</td></tr>';
+
+            try {
+                const res = await fetch(`/admin/exhibitors?page=${page}&limit=50&search=${encodeURIComponent(search)}`);
+                const d = await res.json();
+                const records = d.exhibitors || [];
+                
+                tbody.innerHTML = '';
+                if (!records || records.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-muted);">No exhibitors found.</td></tr>';
+                    return;
+                }
+
+                totalExhibitorPages = d.total_pages || 1;
+                const totalCount = d.total || 0;
+                document.getElementById('exhibitor-count-label').textContent = `Showing ${((page-1)*50)+1}-${Math.min(page*50, totalCount)} of ${totalCount.toLocaleString()} records`;
+
+                records.forEach((r, idx) => {
+                    const rowNum = ((page - 1) * 50) + idx + 1;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${rowNum}</td>
+                        <td><strong>${escapeHtml(r.book_id || '-')}</strong></td>
+                        <td><strong>${escapeHtml(r.name || '-')}</strong></td>
+                        <td>${renderAddress(r.address)}</td>
+                        <td>${escapeHtml(r.tel || '-')}</td>
+                        <td>${r.email ? `<a href="mailto:${escapeHtml(r.email)}" style="color:var(--primary); text-decoration:none;">${escapeHtml(r.email)}</a>` : '<span class="empty-cell">-</span>'}</td>
+                        <td>${r.website ? `<a href="${escapeHtml(r.website)}" target="_blank" style="color:var(--primary); text-decoration:none;">${escapeHtml(r.website)}</a>` : '<span class="empty-cell">-</span>'}</td>
+                        <td>${escapeHtml(r.fax || '-')}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error('Error loading exhibitors:', err);
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#dc2626; padding:20px;">Error loading records.</td></tr>';
+            }
+        }
+
+        function renderAddress(addr) {
+            if (!addr || !addr.trim()) return '<span class="empty-cell">-</span>';
+            return escapeHtml(addr);
+        }
+
+        function prevExhibitorPage() {
+            if (exhibitorPage > 1) loadExhibitors(exhibitorPage - 1);
+        }
+
+        function nextExhibitorPage() {
+            if (exhibitorPage < totalExhibitorPages) loadExhibitors(exhibitorPage + 1);
+        }
+
+        async function loadLedger() {
+            try {
+                const res = await fetch('/admin/credit-ledger');
+                const d = await res.json();
+                const tbody = document.getElementById('ledger-table-body');
+                tbody.innerHTML = '';
+
+                // Baseline row
+                const trBase = document.createElement('tr');
+                trBase.innerHTML = `
+                    <td><strong>Baseline</strong></td>
+                    <td>system@ecommercegateway.com</td>
+                    <td>Historical Offset</td>
+                    <td>-</td>
+                    <td><strong>3,200.00</strong></td>
+                    <td>$10.000</td>
+                `;
+                tbody.appendChild(trBase);
+
+                const entries = d.entries || [];
+                if (entries.length > 0) {
+                    entries.forEach(item => {
+                        const tr = document.createElement('tr');
+                        const eng = item.engine || (item.parse_job_id === 'mistral-ocr-latest' ? 'Mistral OCR' : 'LandingAI ADE');
+                        const isMistral = String(eng).toLowerCase().includes('mistral');
+                        const crVal = isMistral ? (item.credits_used || item.pages_processed || 0.0) : (item.total_credits || item.credits_used || 0.0);
+                        const costVal = isMistral ? 0.0 : (item.cost_estimate_usd || item.cost_usd || 0.0);
+                        tr.innerHTML = `
+                            <td>${item.created_at ? new Date(item.created_at).toLocaleString() : '-'}</td>
+                            <td>${escapeHtml(item.user_email || 'user')}</td>
+                            <td>
+                                <span class="status-badge" style="background:${isMistral?'#fef3c7':'#eff6ff'}; color:${isMistral?'#b45309':'#1d4ed8'}; font-weight:600;">
+                                    ${escapeHtml(eng)}
+                                </span>
+                                <span style="font-size:11px; color:#64748b; display:block; margin-top:2px;">${escapeHtml(item.filename || 'PDF Document')}</span>
+                            </td>
+                            <td>${item.pages_processed || 0}</td>
+                            <td><strong>${Number(crVal).toFixed(2)}</strong></td>
+                            <td>$${costVal.toFixed(3)}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/admin/users');
+                const d = await res.json();
+                const tbody = document.getElementById('users-table-body');
+                tbody.innerHTML = '';
+                const users = d.users || [];
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-muted);">No users registered.</td></tr>';
+                    return;
+                }
+                users.forEach(u => {
+                    const tr = document.createElement('tr');
+                    const isAppr = !!u.approved;
+                    const isAdmin = u.role === 'admin' || !!u.is_admin;
+                    const creditsVal = Number(u.credits || 0);
+                    const totalUsed = Number(u.total_used || 0);
+
+                    tr.innerHTML = `
+                        <td><strong>${escapeHtml(u.email)}</strong></td>
+                        <td><span class="user-badge" style="background:${isAdmin?'#2563eb':'#64748b'}">${escapeHtml(u.role)}</span></td>
+                        <td><span class="status-badge ${isAppr?'success':''}">${isAppr ? 'Approved' : 'Pending'}</span></td>
+                        <td>
+                            ${isAdmin ? '<span style="color:#16a34a; font-weight:700;">Unlimited (Admin)</span>' : `<strong style="color:#2563eb; font-size:13.5px;">${creditsVal.toFixed(2)} cr</strong>`}
+                        </td>
+                        <td>
+                            <span style="color:#64748b; font-weight:600;">${totalUsed.toFixed(2)} cr</span>
+                        </td>
+                        <td>${u.created_at ? new Date(u.created_at).toLocaleDateString() : '-'}</td>
+                        <td>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <button class="btn btn-outline" style="padding:3px 8px; font-size:11px;" onclick="toggleUserStatus('${u.id}', ${!isAppr})">${isAppr ? 'Revoke' : 'Approve'}</button>
+                                ${!isAdmin ? `<button class="btn btn-outline" style="padding:3px 8px; font-size:11px; border-color:#2563eb; color:#2563eb;" onclick="openAddCreditsModal('${u.id}', '${escapeHtml(u.email)}', ${creditsVal})">+ Add Credits</button>` : ''}
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        async function toggleUserStatus(userId, approved) {
+            try {
+                const res = await fetch(`/admin/users/${userId}/toggle-status`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ approved })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    loadUsers();
+                } else {
+                    alert(d.error || 'Failed to update user status');
+                }
+            } catch(e) {
+                alert('Network error');
+            }
+        }
+
+        function openAddCreditsModal(userId, userEmail, currentCredits) {
+            document.getElementById('add-credits-user-id').value = userId;
+            document.getElementById('add-credits-user-email').value = userEmail;
+            document.getElementById('add-credits-user-display').value = userEmail;
+            document.getElementById('add-credits-current-display').value = `${Number(currentCredits).toFixed(2)} credits`;
+            document.getElementById('add-credits-amount').value = '100';
+            openModal('modal-add-credits');
+        }
+
+        async function submitAddCredits(e) {
+            e.preventDefault();
+            const userId = document.getElementById('add-credits-user-id').value;
+            const amount = parseFloat(document.getElementById('add-credits-amount').value);
+            const btn = document.getElementById('btn-submit-add-credits');
+
+            if (!userId || isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid credit amount.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Adding...';
+
+            try {
+                const res = await fetch(`/admin/users/${userId}/add-credits`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ credits_to_add: amount })
+                });
+                const d = await res.json();
+                if (res.ok && d.success) {
+                    closeModal('modal-add-credits');
+                    alert(`Successfully added ${amount} credits! New balance: ${d.new_balance} credits.`);
+                    loadUsers();
+                } else {
+                    alert(d.error || 'Failed to allocate credits.');
+                }
+            } catch(err) {
+                alert('Network error while allocating credits.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Confirm & Add';
+            }
+        }
+
+        // ================= CREDIT REQUESTS =================
+        function filterCreditRequests(status, btn) {
+            currentRequestFilter = status;
+            document.querySelectorAll('#tab-credit-requests .filter-btn').forEach(el => el.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            loadCreditRequests(status);
+        }
+
+        async function loadCreditRequests(status = currentRequestFilter) {
+            const tbody = document.getElementById('credit-requests-table-body');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">Loading credit requests...</td></tr>';
+
+            try {
+                const res = await fetch(`/admin/credit-requests?status=${status}`);
+                const d = await res.json();
+                const requests = d.requests || [];
+
+                // Update nav tag
+                const tag = document.getElementById('nav-requests-tag');
+                if (tag) {
+                    const pendingCount = d.pending_count || 0;
+                    if (pendingCount > 0) {
+                        tag.textContent = pendingCount;
+                        tag.style.display = 'inline-block';
+                    } else {
+                        tag.style.display = 'none';
+                    }
+                }
+
+                tbody.innerHTML = '';
+                if (requests.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-muted);">No ${status === 'all' ? '' : status + ' '}credit requests found.</td></tr>`;
+                    return;
+                }
+
+                requests.forEach(r => {
+                    const tr = document.createElement('tr');
+                    const reqDate = r.created_at ? new Date(r.created_at).toLocaleString() : '-';
+                    const currentBal = Number(r.current_credits !== undefined ? r.current_credits : 0).toFixed(2);
+                    const reqAmt = Number(r.requested_credits || 0);
+                    
+                    let statusBadge = '';
+                    if (r.status === 'approved') {
+                        statusBadge = `<span class="status-badge success">Approved (+${r.approved_credits || reqAmt} cr)</span>`;
+                    } else if (r.status === 'rejected') {
+                        statusBadge = `<span class="status-badge" style="background:#fee2e2; color:#dc2626; font-weight:600;">Rejected</span>`;
+                    } else {
+                        statusBadge = `<span class="status-badge" style="background:#fef3c7; color:#b45309; font-weight:600;">Pending</span>`;
+                    }
+
+                    let actionHtml = '';
+                    if (r.status === 'pending') {
+                        actionHtml = `
+                            <div style="display:flex; gap:6px;">
+                                <button class="btn btn-primary" style="background:#16a34a; padding:3px 8px; font-size:11px;" onclick="openApproveRequestModal('${r.id}', '${escapeHtml(r.user_email)}', ${reqAmt}, '${escapeHtml(r.reason || '')}')">Approve</button>
+                                <button class="btn btn-outline" style="padding:3px 8px; font-size:11px; border-color:#dc2626; color:#dc2626;" onclick="rejectCreditRequest('${r.id}')">Reject</button>
+                            </div>
+                        `;
+                    } else {
+                        actionHtml = `
+                            <button class="btn btn-outline" style="padding:3px 8px; font-size:11px; color:#64748b;" onclick="deleteCreditRequest('${r.id}')">Delete</button>
+                        `;
+                    }
+
+                    tr.innerHTML = `
+                        <td>${reqDate}</td>
+                        <td><strong>${escapeHtml(r.user_email || 'User')}</strong></td>
+                        <td><span style="font-weight:600; color:#2563eb;">${currentBal} cr</span></td>
+                        <td><strong style="color:#16a34a; font-size:13.5px;">+${reqAmt} cr</strong></td>
+                        <td style="max-width:220px; word-break:break-word;">${escapeHtml(r.reason || '-')}</td>
+                        <td>${statusBadge}</td>
+                        <td>${actionHtml}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#dc2626;">Error loading credit requests.</td></tr>';
+            }
+        }
+
+        function openApproveRequestModal(reqId, userEmail, requestedAmount, reason) {
+            document.getElementById('approve-req-id').value = reqId;
+            document.getElementById('approve-req-user-email').value = userEmail;
+            document.getElementById('approve-req-reason').value = reason || 'No additional note provided.';
+            document.getElementById('approve-req-amount').value = requestedAmount || 100;
+            openModal('modal-approve-request');
+        }
+
+        async function submitApproveRequest(e) {
+            e.preventDefault();
+            const reqId = document.getElementById('approve-req-id').value;
+            const amount = parseFloat(document.getElementById('approve-req-amount').value);
+            const btn = document.getElementById('btn-submit-approve-req');
+
+            if (!reqId || isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid credit amount.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Approving...';
+
+            try {
+                const res = await fetch(`/admin/credit-requests/${reqId}/approve`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ approved_credits: amount })
+                });
+                const d = await res.json();
+                if (res.ok && d.success) {
+                    closeModal('modal-approve-request');
+                    alert(`Request approved! Added ${amount} credits. User's new balance: ${d.new_balance} credits.`);
+                    loadCreditRequests();
+                    loadUsers();
+                    checkPendingCreditRequests();
+                } else {
+                    alert(d.error || 'Failed to approve credit request.');
+                }
+            } catch(err) {
+                alert('Network error while approving credit request.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Confirm & Approve';
+            }
+        }
+
+        async function rejectCreditRequest(reqId) {
+            if (!confirm('Are you sure you want to reject this credit request?')) return;
+
+            try {
+                const res = await fetch(`/admin/credit-requests/${reqId}/reject`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({})
+                });
+                const d = await res.json();
+                if (res.ok && d.success) {
+                    loadCreditRequests();
+                    checkPendingCreditRequests();
+                } else {
+                    alert(d.error || 'Failed to reject request.');
+                }
+            } catch(err) {
+                alert('Network error while rejecting request.');
+            }
+        }
+
+        async function deleteCreditRequest(reqId) {
+            if (!confirm('Are you sure you want to remove this request record?')) return;
+
+            try {
+                const res = await fetch(`/admin/credit-requests/${reqId}/delete`, {
+                    method: 'POST'
+                });
+                const d = await res.json();
+                if (res.ok && d.success) {
+                    loadCreditRequests();
+                } else {
+                    alert(d.error || 'Failed to delete request.');
+                }
+            } catch(err) {
+                alert('Network error while deleting request.');
+            }
+        }
+
+        async function loadCatalogs() {
+            try {
+                const tbody = document.getElementById('catalogs-table-body');
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Loading catalog books...</td></tr>';
+                const res = await fetch('/admin/books');
+                const d = await res.json();
+                tbody.innerHTML = '';
+                const books = d.books || [];
+                if (books.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">No books uploaded.</td></tr>';
+                    return;
+                }
+                books.forEach(c => {
+                    const tr = document.createElement('tr');
+                    const countryBadge = c.country ? `<span class="status-badge" style="background:#f0fdf4; color:#16a34a; font-weight:600;">🌍 ${escapeHtml(c.country)}</span>` : `<span class="status-badge">General</span>`;
+                    tr.innerHTML = `
+                        <td><strong>${escapeHtml(c.id || '-')}</strong></td>
+                        <td>${escapeHtml(c.book_name || '-')}</td>
+                        <td>${countryBadge}</td>
+                        <td><strong>${(c.exhibitor_count || 0).toLocaleString()}</strong> records</td>
+                        <td>
+                            <div style="display:flex; gap:6px;">
+                                <button class="btn btn-outline" style="padding:3px 8px; font-size:11px;" onclick="filterByBook('${escapeHtml(c.id)}')">View Records</button>
+                                <button class="btn btn-outline" style="padding:3px 8px; font-size:11px; border-color:#2563eb; color:#2563eb;" onclick="openEditBookModal('${escapeHtml(c.id)}', '${escapeHtml(c.book_name || '')}', '${escapeHtml(c.country || '')}')">✏️ Edit</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function openEditBookModal(bookId, bookName, country) {
+            document.getElementById('edit-book-original-id').value = bookId;
+            document.getElementById('edit-book-id').value = bookId;
+            document.getElementById('edit-book-name').value = bookName;
+            document.getElementById('edit-book-country').value = country || '';
+            openModal('modal-edit-book');
+        }
+
+        async function submitEditBook(e) {
+            e.preventDefault();
+            const originalId = document.getElementById('edit-book-original-id').value;
+            const newBookId = document.getElementById('edit-book-id').value.trim();
+            const newBookName = document.getElementById('edit-book-name').value.trim();
+            const newCountry = document.getElementById('edit-book-country').value.trim();
+            const btn = document.getElementById('btn-submit-edit-book');
+
+            if (!newBookId || !newBookName) {
+                alert('Book ID and Book Name are required.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                const res = await fetch(`/admin/books/${encodeURIComponent(originalId)}/update`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        new_book_id: newBookId,
+                        new_book_name: newBookName,
+                        country: newCountry
+                    })
+                });
+                const d = await res.json();
+                if (res.ok && d.success) {
+                    closeModal('modal-edit-book');
+                    alert(`Book #${newBookId} details & country (${newCountry}) successfully updated!`);
+                    loadCatalogs();
+                    loadOverviewMetrics();
+                } else {
+                    alert(d.error || 'Failed to update book.');
+                }
+            } catch(err) {
+                alert('Network error while updating book.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Changes';
+            }
+        }
+
+        function filterByBook(bookId) {
+            switchTab('exhibitors');
+            document.getElementById('exhibitor-search').value = bookId;
+            loadExhibitors(1);
+        }
+
+        async function loadExhibitors(page = 1) {
+            exhibitorPage = page;
+            const search = (document.getElementById('exhibitor-search').value || '').trim();
+            const tbody = document.getElementById('exhibitors-table-body');
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px;">Loading exhibitors...</td></tr>';
+
+            const exportBtn = document.getElementById('btn-export-exhibitors');
+            if (exportBtn) {
+                exportBtn.href = `/admin/export-exhibitors?search=${encodeURIComponent(search)}`;
+            }
+
+            try {
+                const res = await fetch(`/admin/exhibitors?page=${page}&per_page=50&search=${encodeURIComponent(search)}`);
+                const d = await res.json();
+                tbody.innerHTML = '';
+                const list = d.exhibitors || [];
+                const total = d.total || 0;
+                totalExhibitorPages = d.total_pages || 1;
+
+                document.getElementById('exhibitor-count-label').textContent = `Showing ${list.length} of ${total.toLocaleString()} records`;
+                const pageInd = document.getElementById('exhibitor-page-indicator');
+                if (pageInd) pageInd.textContent = `Page ${page} of ${totalExhibitorPages}`;
+
+                document.getElementById('btn-prev-page').disabled = (page <= 1);
+                document.getElementById('btn-next-page').disabled = (page >= totalExhibitorPages);
+
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--text-muted);">No exhibitors found matching criteria.</td></tr>';
+                    return;
+                }
+
+                list.forEach((ex, idx) => {
+                    const tr = document.createElement('tr');
+                    const rowNum = (page - 1) * 50 + idx + 1;
+                    const countryBadge = ex.country ? `<span class="status-badge" style="background:#f0fdf4; color:#16a34a; font-weight:600;">🌍 ${escapeHtml(ex.country)}</span>` : `<span class="status-badge">General</span>`;
+                    tr.innerHTML = `
+                        <td>${rowNum}</td>
+                        <td><strong>${escapeHtml(ex.book_id || '-')}</strong></td>
+                        <td>${countryBadge}</td>
+                        <td><strong>${escapeHtml(ex.name || '-')}</strong></td>
+                        <td style="max-width:200px; word-break:break-word;">${escapeHtml(ex.address || '-')}</td>
+                        <td>${escapeHtml(ex.tel || '-')}</td>
+                        <td>${escapeHtml(ex.email || '-')}</td>
+                        <td>${escapeHtml(ex.website || '-')}</td>
+                        <td>${escapeHtml(ex.fax || '-')}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:#dc2626;">Error loading exhibitors.</td></tr>';
+            }
+        }
+
+        function prevExhibitorPage() {
+            if (exhibitorPage > 1) {
+                loadExhibitors(exhibitorPage - 1);
+            }
+        }
+
+        function nextExhibitorPage() {
+            if (exhibitorPage < totalExhibitorPages) {
+                loadExhibitors(exhibitorPage + 1);
+            }
+        }
+
+        async function loadIngestionLogs() {
+            try {
+                const res = await fetch('/admin/save-activities');
+                const d = await res.json();
+                const tbody = document.getElementById('ingestion-table-body');
+                tbody.innerHTML = '';
+                const acts = d.activities || [];
+                if (acts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">No extractions saved yet.</td></tr>';
+                    return;
+                }
+                acts.forEach(l => {
+                    const tr = document.createElement('tr');
+                    const savedCount = l.saved_count !== undefined ? l.saved_count : (l.records_saved !== undefined ? l.records_saved : (l.records_count || 0));
+                    tr.innerHTML = `
+                        <td>${l.created_at_formatted || (l.created_at ? new Date(l.created_at).toLocaleString() : '-')}</td>
+                        <td><strong>${escapeHtml(l.user_email || 'User')}</strong></td>
+                        <td><strong>${escapeHtml(l.book_id || '-')}</strong> <small style="color:#64748b;">(${escapeHtml(l.book_name || 'Catalog')})</small></td>
+                        <td><strong style="color:#16a34a; font-size:13.5px;">${Number(savedCount).toLocaleString()}</strong></td>
+                        <td><span class="status-badge success">Saved</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('open');
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('open');
+        }
+
+        async function submitAddUser(e) {
+            e.preventDefault();
+            const email = document.getElementById('new-user-email').value;
+            const password = document.getElementById('new-user-password').value;
+            const role = document.getElementById('new-user-role').value;
+
+            try {
+                const res = await fetch('/admin/create-user', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, password, role })
+                });
+                const d = await res.json();
+                if (res.ok && d.success) {
+                    closeModal('modal-add-user');
+                    document.getElementById('add-user-form').reset();
+                    loadUsers();
+                    alert('User created successfully');
+                } else {
+                    alert(d.error || 'Failed to create user');
+                }
+            } catch(err) {
+                alert('Network error');
+            }
+        }
+
+        function filterTable(input, tableId) {
+            const filter = input.value.toLowerCase();
+            const rows = document.querySelectorAll('#' + tableId + ' tbody tr');
+            rows.forEach(r => {
+                const text = r.textContent.toLowerCase();
+                r.style.display = text.includes(filter) ? '' : 'none';
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadOverviewMetrics();
+            checkPendingCreditRequests();
+        });
+    </script>
+</body>
+</html>
