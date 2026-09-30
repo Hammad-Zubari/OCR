@@ -1,0 +1,29 @@
+{
+  "8e6e6334-584a-4a01-83ad-421ad5fa7c07": {
+    "user_id": "8e6e6334-584a-4a01-83ad-421ad5fa7c07",
+    "email": "hammad@hq.airev.pk",
+    "credits": 100.0,
+    "total_allocated": 100.0,
+    "total_used": 0.0,
+    "role": "user",
+    "last_updated": "2026-09-24 14:49:22"
+  },
+  "2bb478a0-3ce2-4d7e-a94b-fbdcd7390d0b": {
+    "user_id": "2bb478a0-3ce2-4d7e-a94b-fbdcd7390d0b",
+    "email": "muhammadhammad.bscsf22@iba-suk.edu.pk",
+    "credits": 2600.0,
+    "total_allocated": 2600.0,
+    "total_used": 0.0,
+    "role": "user",
+    "last_updated": "2026-09-24 14:49:47"
+  },
+  "05acaa32-196e-43b2-873c-6f87302902cf": {
+    "user_id": "05acaa32-196e-43b2-873c-6f87302902cf",
+    "email": "meerhammad5617@gmail.com",
+    "credits": 999999.0,
+    "total_allocated": 999999.0,
+    "total_used": 0.0,
+    "role": "admin",
+    "last_updated": "2026-09-24 14:49:22"
+  }
+}
