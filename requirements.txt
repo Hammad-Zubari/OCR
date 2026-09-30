@@ -1,0 +1,11 @@
+Flask
+python-dotenv
+pandas
+openpyxl
+supabase
+landingai-ade
+dnspython
+requests
+gdown
+pymupdf
+pypdf

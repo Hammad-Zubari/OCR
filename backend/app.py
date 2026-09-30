@@ -4,23 +4,17 @@ import re
 import json
 import time
 import random
-<<<<<<< HEAD
 import sys
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 import uuid
 import threading
 from pathlib import Path
 from difflib import SequenceMatcher
 from functools import wraps
 
-<<<<<<< HEAD
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 import requests
 import dns.resolver
 import pandas as pd
@@ -51,21 +45,13 @@ from web_search_service import (
 
 load_dotenv(override=True)
 
-<<<<<<< HEAD
 app = Flask(__name__, template_folder=str(PROJECT_ROOT / "Frontend"))
-=======
-app = Flask(__name__)
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 app.secret_key = os.getenv("SECRET_KEY", "exhibitor-system-secure-key-2026-xyz-987")
 
 # Maximum upload size = 100 MB
 app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
 
-<<<<<<< HEAD
 BASE_DIR = PROJECT_ROOT
-=======
-BASE_DIR = Path(__file__).resolve().parent
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 UPLOAD_DIR = BASE_DIR / "uploads"
 OUTPUT_DIR = BASE_DIR / "output"
 
@@ -75,17 +61,10 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 ALLOWED_PDF_EXTENSIONS = {".pdf"}
 ALLOWED_EXCEL_EXTENSIONS = {".xlsx", ".xls", ".csv"}
 
-<<<<<<< HEAD
 # Credit System & Baseline Historical Offset
 LANDING_CREDIT_RATE_USD = 0.01
 BASE_HISTORICAL_CREDITS = 3200.0
 BASE_HISTORICAL_COST_USD = BASE_HISTORICAL_CREDITS * LANDING_CREDIT_RATE_USD
-=======
-# LandingAI Credit System & Baseline Historical Offset
-LANDING_CREDIT_RATE_USD = 0.035
-BASE_HISTORICAL_CREDITS = 3200.0
-BASE_HISTORICAL_COST_USD = 10.00
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
 # In-memory Caches
 EMAIL_VERIFICATION_CACHE = {}
@@ -259,22 +238,6 @@ def clean_chinese_text(text):
     return result
 
 
-<<<<<<< HEAD
-def clean_category_name(raw_category):
-    if not raw_category:
-        return None
-    val = clean_chinese_text(raw_category).strip()
-    if not val or val.lower() in {"none", "null", "nan", "-"}:
-        return None
-    val = re.sub(r"^(?:[A-Z]\s+)?Area\s+[A-Z0-9]+[ \t\-:]*", "", val, flags=re.IGNORECASE).strip()
-    if re.match(r"^Area\s+[A-Z0-9]+$", val, flags=re.IGNORECASE):
-        return None
-    val = re.sub(r"\s+", " ", val).strip(" -:,")
-    return val if val else None
-
-
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 # =========================================================
 # EXTRACTION SCHEMA
 # =========================================================
@@ -290,16 +253,7 @@ EXTRACTION_SCHEMA = {
                 "strictly come ONLY from that specific company's individual section/block. "
                 "DO NOT take or borrow contact info from a preceding or succeeding company if a field is missing. "
                 "For documents with Chinese text, IGNORE and OMIT all Chinese characters, Chinese company names, "
-<<<<<<< HEAD
-                "and Chinese addresses. Extract ONLY the English / Latin company name and English postal address. "
-                "CRITICAL CATEGORY EXTRACTION RULE: Look specifically at the vertical sidebar or margin banner running along "
-                "the right edge, left edge, or header of the page (for example: vertical text such as 'Large Machinery & Equipment', "
-                "'Electronics & Household Electrical Appliances', 'Building Materials', 'Hardware & Tools', etc.). "
-                "Assign this exact English category heading to the 'category' field for ALL exhibitors on that page or section. "
-                "When this vertical margin heading changes in the document, all subsequent exhibitors must receive the new category."
-=======
                 "and Chinese addresses. Extract ONLY the English / Latin company name and English postal address."
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
             ),
             "items": {
                 "type": "object",
@@ -327,23 +281,6 @@ EXTRACTION_SCHEMA = {
                     "website": {
                         "type": "string",
                         "description": "Company website URL(s). If none, return empty."
-<<<<<<< HEAD
-                    },
-                    "category": {
-                        "type": ["string", "null"],
-                        "description": (
-                            "The industry or product category/section for this exhibitor in English. "
-                            "Look at the vertical sidebar, margin banner, or section header printed on the page "
-                            "(e.g. on the right-hand vertical edge such as 'Large Machinery & Equipment', "
-                            "'Area A Large Machinery & Equipment', 'Electronic & Electrical Products', etc.). "
-                            "Extract the clean English category name (e.g. 'Large Machinery & Equipment'). "
-                            "Do NOT include Chinese characters (omit '大型机械及设备' or 'A 区'). "
-                            "All exhibitors on the page under this vertical margin heading share this category. "
-                            "When the vertical heading changes on a subsequent page or section, start the new category. "
-                            "If absolutely no section or vertical heading exists, return null."
-                        )
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
                     }
                 },
                 "required": ["name"]
@@ -364,11 +301,6 @@ def sanitize_record(item):
     raw_fax = clean_chinese_text(item.get("fax", "")).strip()
     raw_email = clean_chinese_text(item.get("email", "")).strip()
     raw_website = clean_chinese_text(item.get("website", "")).strip()
-<<<<<<< HEAD
-    raw_category = item.get("category")
-    category = clean_category_name(clean_chinese_text(raw_category)) if raw_category else None
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
     # Address sanitization: prevent merging 10 different addresses
     addr = raw_addr
@@ -437,12 +369,7 @@ def sanitize_record(item):
         "tel": tel,
         "fax": fax,
         "email": email,
-<<<<<<< HEAD
-        "website": website,
-        "category": category or None
-=======
         "website": website
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
     }
 
 
@@ -494,11 +421,6 @@ def remove_duplicates(records):
                 "fax": record.get("fax", ""),
                 "email": record.get("email", ""),
                 "website": record.get("website", ""),
-<<<<<<< HEAD
-                "category": clean_category_name(record.get("category")),
-                "country": record.get("country", ""),
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
                 "source_context": record.get("source_context", ""),
                 "source_start": record.get("source_start", 0),
                 "source_end": record.get("source_end", 0),
@@ -507,14 +429,7 @@ def remove_duplicates(records):
             }
         else:
             existing = unique[key]
-<<<<<<< HEAD
-            for field in [
-                "address", "tel", "fax", "email", "website", "category", "country",
-                "source_context", "source_start", "source_end", "llm_verification", "web_suggestions"
-            ]:
-=======
             for field in ["address", "tel", "fax", "email", "website", "source_context", "source_start", "source_end", "llm_verification", "web_suggestions"]:
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
                 if not existing.get(field) and record.get(field):
                     existing[field] = record[field]
             if not existing.get("page_number") and record.get("page_number"):
@@ -618,102 +533,6 @@ def locate_companies_in_source(records, source_markdown):
     return positions
 
 
-<<<<<<< HEAD
-def extract_margin_category_from_markdown(md_text):
-    """
-    Detects vertical sidebar or page margin categories from OCR markdown.
-    Handles Canton Fair and trade catalog formats, e.g.:
-    'Area A \n Large Machinery & Equipment'
-    'Area A - Large Machinery & Equipment'
-    '大型机械及设备 \n Large Machinery & Equipment'
-    '## Large Machinery & Equipment'
-    """
-    if not md_text:
-        return None
-
-    # 1. Area X followed by English category text on next line or same line (e.g. Area A \n Large Machinery & Equipment)
-    m = re.search(r"Area\s+[A-Z0-9]+[ \t\-:]*\n+[ \t]*([A-Za-z][A-Za-z0-9 \t&,/\-]{3,70})[ \t]*(?:\n|$)", md_text, re.IGNORECASE)
-    if m:
-        c = clean_category_name(m.group(1))
-        if c and not re.search(r"co\.|ltd|inc|corp|road|street|floor|bldg|tel|fax|email|www", c, re.IGNORECASE):
-            return c
-
-    m = re.search(r"Area\s+[A-Z0-9]+[ \t\-:]+([A-Za-z][A-Za-z0-9 \t&,/\-]{3,70})[ \t]*(?:\n|$)", md_text, re.IGNORECASE)
-    if m:
-        c = clean_category_name(m.group(1))
-        if c and not re.search(r"co\.|ltd|inc|corp|road|street|floor|bldg|tel|fax|email|www", c, re.IGNORECASE):
-            return c
-
-    # 2. Chinese section line followed immediately by English category line (common in Chinese catalogs)
-    lines = [line.strip() for line in md_text.splitlines() if line.strip()]
-    for i in range(len(lines) - 1):
-        line = lines[i]
-        next_line = lines[i + 1]
-        if re.search(r"[\u4e00-\u9fff]", line) and not re.search(r"[\u4e00-\u9fff]", next_line):
-            c = clean_category_name(next_line)
-            if c and 4 <= len(c) <= 65 and not re.search(r"co\.|ltd|inc|corp|road|street|floor|bldg|tel|fax|email|www|http|room|no\.|session|phase", c, re.IGNORECASE):
-                if any(w in c.lower() for w in [
-                    "machinery", "equipment", "appliance", "electronic", "hardware", "tool",
-                    "textile", "garment", "building", "material", "chemical", "vehicle",
-                    "parts", "consumer", "goods", "products", "lighting", "energy", "food",
-                    "medicine", "supplies"
-                ]):
-                    return c
-
-    # 3. Explicit markdown headings # or ##
-    for m in re.finditer(r"(?m)^\s{0,3}#{1,6}\s+([^\r\n]+)", md_text):
-        c = clean_category_name(m.group(1))
-        if c and len(c) > 3 and not re.search(r"co\.|ltd|inc|corp|road|street|floor|bldg|tel|fax|email|www", c, re.IGNORECASE):
-            return c
-
-    return None
-
-
-def assign_categories_from_source(records, source_markdown):
-    """
-    Propagate categories across exhibitor records based on:
-    1) Existing categories extracted by LandingAI ADE / Mistral OCR.
-    2) Margin / section headings detected in source markdown per page.
-    3) Sequential forward-fill carry-forward: whenever a new heading/category is encountered,
-       start that category and assign it to all subsequent exhibitors until the next heading.
-    """
-    if not records:
-        return records
-
-    page_categories = {}
-    if source_markdown:
-        page_blocks = re.split(r"(<!-- Page \d+ -->)", source_markdown)
-        current_pno = 1
-        for block in page_blocks:
-            p_match = re.search(r"<!-- Page (\d+) -->", block)
-            if p_match:
-                current_pno = int(p_match.group(1))
-            else:
-                cat = extract_margin_category_from_markdown(block)
-                if cat:
-                    page_categories[current_pno] = cat
-
-    current_category = None
-    for record in records:
-        rec_cat = clean_category_name(record.get("category"))
-        pno = record.get("page_number", 1)
-
-        if rec_cat:
-            current_category = rec_cat
-            record["category"] = rec_cat
-        elif pno in page_categories and page_categories[pno]:
-            current_category = page_categories[pno]
-            record["category"] = current_category
-        elif current_category:
-            record["category"] = current_category
-        else:
-            record["category"] = None
-
-    return records
-
-
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 def value_in_text(value, text, field_type):
     """Checks whether a field value exists inside a given text region."""
     if not value or not text:
@@ -941,10 +760,6 @@ def verify_company_field_boundaries(records, source_markdown):
             "fax": str(r.get("fax", "")).strip(),
             "email": str(r.get("email", "")).strip(),
             "website": str(r.get("website", "")).strip(),
-<<<<<<< HEAD
-            "category": r.get("category") or None,
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
             "page_number": r.get("page_number", 1),
             "source_context": current_section.strip(),
             "source_start": start_pos,
@@ -1036,10 +851,6 @@ def save_excel(records, output_file):
         "page_number",
         "book_id",
         "country",
-<<<<<<< HEAD
-        "category",
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         "name",
         "address",
         "tel",
@@ -1084,11 +895,6 @@ def parse_excel_records(file_stream_or_path, filename):
             col_map["email"] = col
         elif any(k in c for k in ["website", "web", "url", "site", "domain"]) and "website" not in col_map:
             col_map["website"] = col
-<<<<<<< HEAD
-        elif any(k in c for k in ["category", "section", "sector"]) and "category" not in col_map:
-            col_map["category"] = col
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         elif any(k in c for k in ["page", "page no", "page number", "pg"]) and "page_number" not in col_map:
             col_map["page_number"] = col
 
@@ -1119,12 +925,7 @@ def parse_excel_records(file_stream_or_path, filename):
             "tel": clean_chinese_text(get_cell(row, "tel")),
             "fax": clean_chinese_text(get_cell(row, "fax")),
             "email": clean_chinese_text(get_cell(row, "email")),
-<<<<<<< HEAD
-            "website": clean_chinese_text(get_cell(row, "website")),
-            "category": clean_chinese_text(get_cell(row, "category")) or None
-=======
             "website": clean_chinese_text(get_cell(row, "website"))
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         })
 
     return remove_duplicates(records)
@@ -1158,11 +959,7 @@ def get_book_country(book_id, default="General"):
         return b_info.strip() or default
     return default
 
-<<<<<<< HEAD
 def set_book_metadata(book_id, country=None, book_name=None, year=None, old_book_id=None):
-=======
-def set_book_metadata(book_id, country=None, book_name=None, old_book_id=None):
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
     if not book_id:
         return
     book_id = str(book_id).strip()
@@ -1182,11 +979,8 @@ def set_book_metadata(book_id, country=None, book_name=None, old_book_id=None):
                     country = old_data.get("country")
                 if book_name is None:
                     book_name = old_data.get("book_name")
-<<<<<<< HEAD
                 if year is None:
                     year = old_data.get("year")
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
         current = meta.get(book_id, {})
         if not isinstance(current, dict):
@@ -1196,11 +990,8 @@ def set_book_metadata(book_id, country=None, book_name=None, old_book_id=None):
             current["country"] = str(country).strip() or "General"
         if book_name is not None:
             current["book_name"] = str(book_name).strip()
-<<<<<<< HEAD
         if year is not None:
             current["year"] = str(year).strip() or None
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
         meta[book_id] = current
         try:
@@ -1210,128 +1001,7 @@ def set_book_metadata(book_id, country=None, book_name=None, old_book_id=None):
             print(f"[Save Book Metadata Error]: {e}")
 
 
-<<<<<<< HEAD
-def normalize_catalog_name(name):
-    if not name:
-        return ""
-    # Strip file extensions
-    s = re.sub(r'\.(pdf|xlsx|xls|csv)$', '', str(name).strip(), flags=re.IGNORECASE)
-    # Remove surrounding quotes or punctuation
-    s = s.strip("\"' ")
-    # Replace punctuation like dashes/underscores with space
-    s = re.sub(r'[-_/\\]', ' ', s)
-    # Normalize brackets
-    s = re.sub(r'[\(\[\{]+', ' ', s)
-    s = re.sub(r'[\)\]\}]+', ' ', s)
-    # Collapse whitespace
-    s = re.sub(r'\s+', ' ', s)
-    return s.strip().lower()
-
-
-def alphanumeric_slug(name):
-    if not name:
-        return ""
-    s = re.sub(r'\.(pdf|xlsx|xls|csv)$', '', str(name).strip(), flags=re.IGNORECASE)
-    return re.sub(r'[^a-z0-9]', '', s.lower())
-
-
-def find_existing_catalog(book_id=None, book_name=None):
-    """
-    Finds an existing catalog in Supabase 'books' table:
-    1. By exact ID
-    2. By case-insensitive ID
-    3. By exact book_name
-    4. By normalized book_name (ignoring extensions, brackets, extra whitespace)
-    5. By alphanumeric slug
-    6. By fuzzy similarity (ratio >= 0.88)
-    Returns: dict of existing book from DB or None
-    """
-    client, error = get_supabase_client()
-    if error or not client:
-        return None
-
-    book_id_clean = str(book_id or "").strip()
-    book_name_clean = str(book_name or "").strip()
-
-    try:
-        # 1. Exact ID check
-        if book_id_clean:
-            res_id = client.table("books").select("id, book_name, country, year").eq("id", book_id_clean).limit(1).execute()
-            if res_id.data and len(res_id.data) > 0:
-                return res_id.data[0]
-
-        # Fetch all books for robust matching
-        all_books_res = client.table("books").select("id, book_name, country, year").execute()
-        all_books = all_books_res.data or []
-
-        # 2. Case-insensitive ID check
-        if book_id_clean:
-            for b in all_books:
-                if str(b.get("id", "")).strip().lower() == book_id_clean.lower():
-                    return b
-
-        if not book_name_clean:
-            return None
-
-        # 3. Exact case-insensitive name match
-        for b in all_books:
-            b_name = str(b.get("book_name", "")).strip()
-            if b_name.lower() == book_name_clean.lower():
-                return b
-
-        # 4. Normalized name match
-        input_norm = normalize_catalog_name(book_name_clean)
-        if input_norm:
-            for b in all_books:
-                db_norm = normalize_catalog_name(b.get("book_name", ""))
-                if db_norm and db_norm == input_norm:
-                    return b
-
-        # 5. Alphanumeric match
-        input_alpha = alphanumeric_slug(book_name_clean)
-        if input_alpha and len(input_alpha) >= 4:
-            for b in all_books:
-                db_alpha = alphanumeric_slug(b.get("book_name", ""))
-                if db_alpha and db_alpha == input_alpha:
-                    return b
-
-        # 6. Fuzzy match (similarity >= 0.88)
-        if input_norm and len(input_norm) >= 10:
-            best_match = None
-            best_ratio = 0.0
-            for b in all_books:
-                db_norm = normalize_catalog_name(b.get("book_name", ""))
-                if db_norm and len(db_norm) >= 10:
-                    ratio = SequenceMatcher(None, input_norm, db_norm).ratio()
-                    if ratio > best_ratio and ratio >= 0.88:
-                        best_ratio = ratio
-                        best_match = b
-            if best_match:
-                return best_match
-
-    except Exception as e:
-        print(f"[find_existing_catalog Error]: {e}")
-
-    return None
-
-
 def create_book(book_id, book_name, country=None, year=None):
-    """
-    Creates or reuses a book record in Supabase:
-    1. If catalog already exists in database (by book_id or matching book_name):
-       - Reuses the existing catalog in DB.
-       - NEVER creates a new catalog row or duplicate name.
-       - Keeps DB's existing ID and book_name.
-       - Updates country/year if missing in DB.
-       - Returns existing_id and existing_name.
-    2. If neither book_id nor book_name exists in DB:
-       - Creates a new book record in the database.
-    """
-    client, error = get_supabase_client()
-    if error:
-        return False, None, None, error
-=======
-def create_book(book_id, book_name, country=None):
     """
     Creates or reuses a book record and manages country:
     1. If book_id already exists:
@@ -1345,61 +1015,29 @@ def create_book(book_id, book_name, country=None):
     client, error = get_supabase_client()
     if error:
         return False, None, error
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
     book_id = str(book_id or "").strip()
     book_name = str(book_name or "").strip() or "General Catalog"
     country = str(country or "").strip() or "General"
-<<<<<<< HEAD
     year = str(year or "").strip() or None
-
-    if not book_id:
-        return False, None, None, "Book ID is required. Please enter a manual Book ID."
-
-    try:
-        # Check if catalog already exists in DB (by ID or catalog Name)
-        existing_book = find_existing_catalog(book_id=book_id, book_name=book_name)
-        if existing_book:
-            final_id = str(existing_book.get("id", book_id)).strip()
-            final_name = str(existing_book.get("book_name", "")).strip() or book_name
-            final_country = str(existing_book.get("country", "")).strip() or country
-            final_year = existing_book.get("year") or year
-
-            set_book_metadata(final_id, country=final_country, book_name=final_name, year=final_year)
-            try:
-                update_data = {}
-                if country and country != "General" and (not existing_book.get("country") or existing_book.get("country") == "General"):
-                    update_data["country"] = country
-                if year is not None and not existing_book.get("year"):
-                    update_data["year"] = year
-                if update_data:
-                    client.table("books").update(update_data).eq("id", final_id).execute()
-            except Exception:
-                pass
-
-            return True, final_id, final_name, f"Catalog [{final_id}] '{final_name}' pehle se DB mein mojood hai. Naya catalog nahi banaya gaya, existing catalog reuse kiya gaya."
-
-        # Neither book_id nor book_name exists -> create new book record
-        insert_data = {
-            "id": book_id,
-            "book_name": book_name,
-            "year": year
-=======
 
     if not book_id:
         return False, None, "Book ID is required. Please enter a manual Book ID."
 
     try:
-        existing = client.table("books").select("id, book_name").eq("id", book_id).limit(1).execute()
+        existing = client.table("books").select("id, book_name, year").eq("id", book_id).limit(1).execute()
         if existing.data and len(existing.data) > 0:
             existing_book = existing.data[0]
             existing_name = str(existing_book.get("book_name", "")).strip()
 
             # Normalize for comparison (case-insensitive & trimmed)
             if existing_name.lower() == book_name.lower():
-                set_book_metadata(book_id, country=country, book_name=book_name)
+                set_book_metadata(book_id, country=country, book_name=book_name, year=year)
                 try:
-                    client.table("books").update({"country": country}).eq("id", book_id).execute()
+                    update_data = {"country": country}
+                    if year is not None:
+                        update_data["year"] = year
+                    client.table("books").update(update_data).eq("id", book_id).execute()
                 except Exception:
                     pass
                 return True, book_id, f"Existing book '{existing_name}' reused."
@@ -1408,13 +1046,12 @@ def create_book(book_id, book_name, country=None):
 
         insert_data = {
             "id": book_id,
-            "book_name": book_name
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
+            "book_name": book_name,
+            "year": year
         }
         try:
             response = client.table("books").insert(dict(insert_data, country=country)).execute()
         except Exception:
-<<<<<<< HEAD
             try:
                 response = client.table("books").insert(dict(insert_data, country=country)).execute()
             except Exception:
@@ -1423,37 +1060,15 @@ def create_book(book_id, book_name, country=None):
         set_book_metadata(book_id, country=country, book_name=book_name, year=year)
 
         if response.data and len(response.data) > 0:
-            created_id = str(response.data[0].get("id", book_id))
-            created_name = str(response.data[0].get("book_name", book_name))
-            return True, created_id, created_name, f"New catalog '{created_name}' [ID: {created_id}] created successfully."
-        return True, book_id, book_name, f"New catalog '{book_name}' [ID: {book_id}] record created."
-
-    except Exception as e:
-        print(f"[Supabase create_book error]: {e}")
-        return False, None, None, f"Database error while creating/verifying book: {str(e)}"
-    except Exception as e:
-        return False, None, None, str(e)
-
-
-def update_book_details(old_book_id, new_book_id, new_book_name, country=None, year=None):
-    """
-    Updates an existing Book's ID, Name, Country, and optional Year.
-=======
-            response = client.table("books").insert(insert_data).execute()
-
-        set_book_metadata(book_id, country=country, book_name=book_name)
-
-        if response.data and len(response.data) > 0:
             return True, str(response.data[0]["id"]), "Book created successfully."
         return True, book_id, "Book record created."
     except Exception as e:
         return False, None, str(e)
 
 
-def update_book_details(old_book_id, new_book_id, new_book_name, country=None):
+def update_book_details(old_book_id, new_book_id, new_book_name, country=None, year=None):
     """
-    Updates an existing Book's ID, Name, and Country.
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
+    Updates an existing Book's ID, Name, Country, and optional Year.
     When Book ID is changed:
     1. Validates that new_book_id is not already assigned to another book.
     2. Updates or cascades the ID and Country to all related exhibitors in the database.
@@ -1467,10 +1082,7 @@ def update_book_details(old_book_id, new_book_id, new_book_name, country=None):
     new_book_id = str(new_book_id or "").strip()
     new_book_name = str(new_book_name or "").strip() or "General Catalog"
     country = str(country or "").strip() or "General"
-<<<<<<< HEAD
     year = str(year or "").strip() or None
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
     if not old_book_id:
         return False, "Old Book ID is required."
@@ -1479,11 +1091,7 @@ def update_book_details(old_book_id, new_book_id, new_book_name, country=None):
 
     try:
         # Find existing book
-<<<<<<< HEAD
         old_res = client.table("books").select("id, book_name, year").eq("id", old_book_id).limit(1).execute()
-=======
-        old_res = client.table("books").select("id, book_name").eq("id", old_book_id).limit(1).execute()
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         if not old_res.data or len(old_res.data) == 0:
             return False, f"Book with ID '{old_book_id}' not found in database."
 
@@ -1491,26 +1099,17 @@ def update_book_details(old_book_id, new_book_id, new_book_name, country=None):
 
         if new_book_id != old_book_id:
             # Check if new_book_id is already assigned to a different book
-<<<<<<< HEAD
             chk_res = client.table("books").select("id, book_name, year").eq("id", new_book_id).limit(1).execute()
-=======
-            chk_res = client.table("books").select("id, book_name").eq("id", new_book_id).limit(1).execute()
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
             if chk_res.data and len(chk_res.data) > 0:
                 conflict_name = chk_res.data[0].get("book_name", "")
                 return False, f"Cannot change ID: Book ID '{new_book_id}' is already assigned to book '{conflict_name}'."
 
             # Insert new book record first to satisfy any foreign keys
-<<<<<<< HEAD
             insert_data = {"id": new_book_id, "book_name": new_book_name, "country": country}
             if year is not None:
                 insert_data["year"] = year
             try:
                 client.table("books").insert(insert_data).execute()
-=======
-            try:
-                client.table("books").insert({"id": new_book_id, "book_name": new_book_name, "country": country}).execute()
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
             except Exception:
                 client.table("books").insert({"id": new_book_id, "book_name": new_book_name}).execute()
 
@@ -1529,16 +1128,11 @@ def update_book_details(old_book_id, new_book_id, new_book_name, country=None):
 
         else:
             # Only book name / country changed
-<<<<<<< HEAD
             update_data = {"book_name": new_book_name, "country": country}
             if year is not None:
                 update_data["year"] = year
             try:
                 client.table("books").update(update_data).eq("id", old_book_id).execute()
-=======
-            try:
-                client.table("books").update({"book_name": new_book_name, "country": country}).eq("id", old_book_id).execute()
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
             except Exception:
                 client.table("books").update({"book_name": new_book_name}).eq("id", old_book_id).execute()
 
@@ -1550,11 +1144,7 @@ def update_book_details(old_book_id, new_book_id, new_book_name, country=None):
                     print(f"[Update exhibitors country error on {tbl}]: {ex_cntry_err}")
 
         # Update metadata store
-<<<<<<< HEAD
         set_book_metadata(new_book_id, country=country, book_name=new_book_name, year=year, old_book_id=old_book_id)
-=======
-        set_book_metadata(new_book_id, country=country, book_name=new_book_name, old_book_id=old_book_id)
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
         # Update local activity logs
         logs = get_user_save_activities()
@@ -1602,10 +1192,6 @@ def save_supabase(records, book_id, country=None):
             "fax": str(r.get("fax", "")).strip(),
             "email": str(r.get("email", "")).strip(),
             "website": str(r.get("website", "")).strip(),
-<<<<<<< HEAD
-            "category": str(r.get("category", "")).strip() or None,
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
             "country": rec_country,
             "book_id": book_id
         })
@@ -1625,27 +1211,12 @@ def save_supabase(records, book_id, country=None):
             # If country column not found, fallback to insert without country
             if "country" in err_str:
                 try:
-<<<<<<< HEAD
-                    fallback_records = [{k: v for k, v in rec.items() if k not in {"country"}} for rec in db_records]
-=======
                     fallback_records = [{k: v for k, v in rec.items() if k != "country"} for rec in db_records]
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
                     res = client.table(table_name).insert(fallback_records).execute()
                     saved_count = len(res.data) if res.data else len(fallback_records)
                     return True, saved_count, f"{saved_count} exhibitors saved to '{table_name}'."
                 except Exception as fb_err:
                     print(f"[Supabase Fallback Save Error on {table_name}] {fb_err}")
-<<<<<<< HEAD
-            if "category" in err_str:
-                try:
-                    fallback_records = [{k: v for k, v in rec.items() if k != "category"} for rec in db_records]
-                    res = client.table(table_name).insert(fallback_records).execute()
-                    saved_count = len(res.data) if res.data else len(fallback_records)
-                    return True, saved_count, f"{saved_count} exhibitors saved to '{table_name}'."
-                except Exception as category_err:
-                    print(f"[Supabase Category Fallback Save Error on {table_name}] {category_err}")
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
             print(f"[Supabase Save Error on {table_name}] {table_err}")
 
     return False, 0, "Could not save to Supabase table."
@@ -1724,13 +1295,8 @@ def log_extraction_credit_activity(
         time_formatted = now_dt.strftime("%d %b %Y, %I:%M:%S %p")
         time_short = now_dt.strftime("%I:%M %p")
 
-<<<<<<< HEAD
         # Cost rate: 100 credits = $1.00.
         cost_est = round(float(total_credits or 0.0) * LANDING_CREDIT_RATE_USD, 4)
-=======
-        # Estimated cost ($0.035 / credit approx standard ADE rate)
-        cost_est = round(float(total_credits or 0.0) * 0.035, 4)
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
         entry = {
             "id": uuid.uuid4().hex,
@@ -1802,7 +1368,6 @@ def get_extraction_credit_ledger(timeframe="all", search=""):
             or q in str(e.get("created_at_formatted", "")).lower()
         ]
 
-<<<<<<< HEAD
     # Recalculate persisted rows with the current rate so historical entries
     # and new entries use the same pricing in cards, tables, and exports.
     normalized = []
@@ -1812,9 +1377,6 @@ def get_extraction_credit_ledger(timeframe="all", search=""):
         item["cost_estimate_usd"] = round(credits * LANDING_CREDIT_RATE_USD, 4)
         normalized.append(item)
     return normalized
-=======
-    return filtered
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
 
 def delete_extraction_credit_entry(entry_id):
@@ -2943,19 +2505,10 @@ Extract all company exhibitors from the document markdown into valid JSON follow
       "tel": "Telephone or mobile number",
       "email": "Official email address",
       "website": "Website URL",
-<<<<<<< HEAD
-      "fax": "Fax number if present",
-      "category": "Actual English section/category heading from the page margin, vertical sidebar, or header (e.g. 'Large Machinery & Equipment'). Do NOT include Chinese characters. All exhibitors on the page share this vertical category heading."
-    }
-  ]
-}
-Look specifically for the vertical margin banner or sidebar on the right/left edge of the page that indicates the industry category (e.g. 'Large Machinery & Equipment'). Assign this category to every exhibitor under that section until a new vertical heading begins.
-=======
       "fax": "Fax number if present"
     }
   ]
 }
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 Return ONLY valid JSON."""
 
         chat_payload = {
@@ -2968,10 +2521,6 @@ Return ONLY valid JSON."""
             "temperature": 0.0
         }
 
-<<<<<<< HEAD
-        page_cat = extract_margin_category_from_markdown(page_md)
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         try:
             c_resp = requests.post("https://api.mistral.ai/v1/chat/completions", headers=headers, json=chat_payload, timeout=60)
             if c_resp.status_code == 200:
@@ -2982,11 +2531,6 @@ Return ONLY valid JSON."""
                 for c_rec in cleaned:
                     c_rec["page_number"] = p_idx + 1
                     c_rec["country"] = country
-<<<<<<< HEAD
-                    if not c_rec.get("category") and page_cat:
-                        c_rec["category"] = page_cat
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
                 all_raw_records.extend(cleaned)
         except Exception as e:
             print(f"[Mistral Page {p_idx+1}] Extraction warning: {e}")
@@ -2996,10 +2540,6 @@ Return ONLY valid JSON."""
         return jsonify({"success": False, "error": "Koi exhibitor data extract nahi hua Mistral OCR se."}), 422
 
     source_text = "\n\n".join(all_source_markdown)
-<<<<<<< HEAD
-    records = assign_categories_from_source(records, source_text)
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
     reset_metrics_stats()
     complete_count = 0
@@ -3160,18 +2700,9 @@ def process_pdf_document(pdf_path: Path, book_id: str, book_name: str, display_f
                         extract_billings.append(ext_bill)
                     extraction = getattr(extract_response, "extraction", None)
                     split_records = clean_exhibitors(extraction)
-<<<<<<< HEAD
-                    page_cat = extract_margin_category_from_markdown(markdown)
                     for s_rec in split_records:
                         s_rec["page_number"] = page_counter
                         s_rec["country"] = country
-                        if not s_rec.get("category") and page_cat:
-                            s_rec["category"] = page_cat
-=======
-                    for s_rec in split_records:
-                        s_rec["page_number"] = page_counter
-                        s_rec["country"] = country
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
                     all_raw_records.extend(split_records)
                 except Exception as e:
                     print(f"Extraction section warning: {e}")
@@ -3190,18 +2721,9 @@ def process_pdf_document(pdf_path: Path, book_id: str, book_name: str, display_f
                 extract_billings.append(ext_bill)
             extraction = getattr(extract_response, "extraction", None)
             raw_cleaned = clean_exhibitors(extraction)
-<<<<<<< HEAD
-            page_cat = extract_margin_category_from_markdown(markdown)
             for r_rec in raw_cleaned:
                 r_rec["page_number"] = page_counter
                 r_rec["country"] = country
-                if not r_rec.get("category") and page_cat:
-                    r_rec["category"] = page_cat
-=======
-            for r_rec in raw_cleaned:
-                r_rec["page_number"] = page_counter
-                r_rec["country"] = country
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
             all_raw_records.extend(raw_cleaned)
 
         # Clean temporary chunk file if it was created
@@ -3236,10 +2758,6 @@ def process_pdf_document(pdf_path: Path, book_id: str, book_name: str, display_f
         return jsonify({"success": False, "error": "Koi exhibitor data extract nahi hua."}), 422
 
     source_text = "\n\n".join(all_source_markdown)
-<<<<<<< HEAD
-    records = assign_categories_from_source(records, source_text)
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
     # Step 4: Selective Web Enrichment with Deterministic Prioritization
     reset_metrics_stats()
@@ -3541,10 +3059,7 @@ def save_supabase_route():
         book_id = str(payload.get("book_id", "")).strip()
         book_name = str(payload.get("book_name", "")).strip() or "General Catalog"
         country = str(payload.get("country", "")).strip() or "General"
-<<<<<<< HEAD
         year = str(payload.get("year", "")).strip() or None
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         records = payload.get("records", [])
 
         if not book_id:
@@ -3553,36 +3068,17 @@ def save_supabase_route():
         if not records:
             return jsonify({"success": False, "error": "Save karne ke liye koi records nahi hain."}), 400
 
-<<<<<<< HEAD
-        book_success, final_book_id, final_book_name, book_msg = create_book(book_id, book_name, country=country, year=year)
-        if not book_success:
-            return jsonify({"success": False, "error": book_msg}), 400
-
-        success, saved_count, message = save_supabase(records, final_book_id, country=country)
-=======
-        book_success, final_book_id, book_msg = create_book(book_id, book_name, country=country)
+        book_success, final_book_id, book_msg = create_book(book_id, book_name, country=country, year=year)
         if not book_success:
             return jsonify({"success": False, "error": book_msg}), 400
 
         success, saved_count, message = save_supabase(records, final_book_id)
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         if not success:
             return jsonify({"success": False, "error": message}), 400
 
         # Log User Save Activity for Admin Dashboard Audit Trail
         user_id = session.get("user_id", "unknown")
         user_email = session.get("email", "unknown@user.com")
-<<<<<<< HEAD
-        log_user_save_activity(user_id, user_email, final_book_id, final_book_name, saved_count)
-
-        return jsonify({
-            "success": True,
-            "message": f"Catalog '{final_book_name}' [ID: {final_book_id}, Country: {country}] ke {saved_count} exhibitors database mein save ho gaye.",
-            "book_id": final_book_id,
-            "book_name": final_book_name,
-            "country": country,
-            "year": year,
-=======
         log_user_save_activity(user_id, user_email, final_book_id, book_name, saved_count)
 
         return jsonify({
@@ -3591,7 +3087,7 @@ def save_supabase_route():
             "book_id": final_book_id,
             "book_name": book_name,
             "country": country,
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
+            "year": year,
             "saved_count": saved_count
         })
 
@@ -3599,22 +3095,6 @@ def save_supabase_route():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-<<<<<<< HEAD
-@app.route("/api/books", methods=["GET"])
-@login_required
-def api_get_books():
-    client, error = get_supabase_client()
-    if error:
-        return jsonify({"success": False, "error": error}), 500
-    try:
-        res = client.table("books").select("id, book_name, country, year").order("uploaded_at", desc=True).execute()
-        return jsonify({"success": True, "books": res.data or []})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
-
-
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 @app.route("/export-excel", methods=["POST"])
 @login_required
 def export_excel():
@@ -3717,11 +3197,7 @@ def admin_overview_metrics():
         total_records_extracted = sum(int(e.get("records_extracted", 0)) for e in credit_entries)
         live_cost_usd = sum(float(e.get("cost_estimate_usd", 0.0)) for e in credit_entries)
 
-<<<<<<< HEAD
         # Baseline offset: 3,200.00 credits and $32.00 USD
-=======
-        # Baseline offset: 3,200.00 credits and $10.00 USD
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         base_credits = BASE_HISTORICAL_CREDITS if timeframe in ["all", "cumulative"] else 0.0
         base_cost_usd = BASE_HISTORICAL_COST_USD if timeframe in ["all", "cumulative"] else 0.0
         total_credits_used = base_credits + live_credits_used
@@ -4344,11 +3820,7 @@ def admin_get_books():
         return jsonify({"success": False, "error": error}), 500
 
     try:
-<<<<<<< HEAD
         books_res = client.table("books").select("id, book_name, year, uploaded_at").order("uploaded_at", desc=True).execute()
-=======
-        books_res = client.table("books").select("id, book_name, uploaded_at").order("uploaded_at", desc=True).execute()
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         books = books_res.data or []
         meta_map = get_all_book_metadata()
 
@@ -4366,10 +3838,7 @@ def admin_get_books():
         for b in books:
             b_id_str = str(b.get("id", ""))
             b["country"] = meta_map.get(b_id_str, {}).get("country", "") or b.get("country", "General")
-<<<<<<< HEAD
             b["year"] = meta_map.get(b_id_str, {}).get("year") or b.get("year")
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
             try:
                 c_res = client.table(target_table).select("id", count="exact").eq("book_id", b_id_str).limit(1).execute()
                 b["exhibitor_count"] = c_res.count if c_res.count is not None else len(c_res.data or [])
@@ -4390,21 +3859,14 @@ def admin_update_book(book_id):
         new_book_id = str(payload.get("new_book_id", "")).strip()
         new_book_name = str(payload.get("new_book_name", "")).strip()
         new_country = str(payload.get("country", "")).strip()
-<<<<<<< HEAD
         new_year = str(payload.get("year", "")).strip() or None
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
 
         if not new_book_id:
             return jsonify({"success": False, "error": "New Book ID cannot be empty."}), 400
         if not new_book_name:
             return jsonify({"success": False, "error": "New Book Name cannot be empty."}), 400
 
-<<<<<<< HEAD
         success, msg = update_book_details(book_id, new_book_id, new_book_name, country=new_country, year=new_year)
-=======
-        success, msg = update_book_details(book_id, new_book_id, new_book_name, country=new_country)
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         if not success:
             return jsonify({"success": False, "error": msg}), 400
 
@@ -4414,12 +3876,8 @@ def admin_update_book(book_id):
             "old_book_id": book_id,
             "new_book_id": new_book_id,
             "new_book_name": new_book_name,
-<<<<<<< HEAD
             "country": new_country,
             "year": new_year
-=======
-            "country": new_country
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
         })
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
@@ -4487,10 +3945,6 @@ def admin_get_exhibitors():
 
                 filters = [
                     f"name.ilike.%{search}%",
-<<<<<<< HEAD
-                    f"category.ilike.%{search}%",
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
                     f"address.ilike.%{search}%",
                     f"email.ilike.%{search}%",
                     f"website.ilike.%{search}%",
@@ -4584,10 +4038,6 @@ def admin_export_exhibitors():
 
                 filters = [
                     f"name.ilike.%{search}%",
-<<<<<<< HEAD
-                    f"category.ilike.%{search}%",
-=======
->>>>>>> a720915e39ab4616830252114ec8b12791ae9f81
                     f"address.ilike.%{search}%",
                     f"email.ilike.%{search}%",
                     f"website.ilike.%{search}%",
